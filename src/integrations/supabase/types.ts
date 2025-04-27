@@ -9,7 +9,170 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
-      [_ in never]: never
+      booking_items: {
+        Row: {
+          booking_id: string | null
+          created_at: string | null
+          id: string
+          menu_item_id: string | null
+          quantity: number
+        }
+        Insert: {
+          booking_id?: string | null
+          created_at?: string | null
+          id?: string
+          menu_item_id?: string | null
+          quantity: number
+        }
+        Update: {
+          booking_id?: string | null
+          created_at?: string | null
+          id?: string
+          menu_item_id?: string | null
+          quantity?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "booking_items_booking_id_fkey"
+            columns: ["booking_id"]
+            isOneToOne: false
+            referencedRelation: "bookings"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "booking_items_menu_item_id_fkey"
+            columns: ["menu_item_id"]
+            isOneToOne: false
+            referencedRelation: "menu_items"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      bookings: {
+        Row: {
+          booking_amount: number
+          booking_date: string
+          booking_time: string
+          created_at: string | null
+          guest_count: number
+          id: string
+          payment_status: string | null
+          status: string | null
+          table_id: string
+          user_id: string
+        }
+        Insert: {
+          booking_amount: number
+          booking_date: string
+          booking_time: string
+          created_at?: string | null
+          guest_count: number
+          id?: string
+          payment_status?: string | null
+          status?: string | null
+          table_id: string
+          user_id: string
+        }
+        Update: {
+          booking_amount?: number
+          booking_date?: string
+          booking_time?: string
+          created_at?: string | null
+          guest_count?: number
+          id?: string
+          payment_status?: string | null
+          status?: string | null
+          table_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "bookings_table_id_fkey"
+            columns: ["table_id"]
+            isOneToOne: false
+            referencedRelation: "tables"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      menu_items: {
+        Row: {
+          category: string
+          created_at: string | null
+          description: string | null
+          id: string
+          is_available: boolean | null
+          name: string
+          price: number
+        }
+        Insert: {
+          category: string
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          is_available?: boolean | null
+          name: string
+          price: number
+        }
+        Update: {
+          category?: string
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          is_available?: boolean | null
+          name?: string
+          price?: number
+        }
+        Relationships: []
+      }
+      profiles: {
+        Row: {
+          created_at: string | null
+          first_name: string | null
+          id: string
+          last_name: string | null
+          phone_number: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          first_name?: string | null
+          id: string
+          last_name?: string | null
+          phone_number?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          first_name?: string | null
+          id?: string
+          last_name?: string | null
+          phone_number?: string | null
+        }
+        Relationships: []
+      }
+      tables: {
+        Row: {
+          capacity: number
+          created_at: string | null
+          id: string
+          is_available: boolean | null
+          table_number: number
+        }
+        Insert: {
+          capacity: number
+          created_at?: string | null
+          id?: string
+          is_available?: boolean | null
+          table_number: number
+        }
+        Update: {
+          capacity?: number
+          created_at?: string | null
+          id?: string
+          is_available?: boolean | null
+          table_number?: number
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
