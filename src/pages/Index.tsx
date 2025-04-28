@@ -1,4 +1,3 @@
-
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
@@ -23,7 +22,7 @@ const Index = () => {
       <div className="container mx-auto px-4 py-16">
         <div className="max-w-4xl mx-auto text-center space-y-8">
           <h1 className="text-5xl font-bold text-gray-900 mb-4">
-            As Predin Prebooking Dining Planner
+            Predin Prebooking Dining Planner
           </h1>
           <p className="text-xl text-gray-600 mb-8">
             Experience seamless dining reservations with our premium booking platform
