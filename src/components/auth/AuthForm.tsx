@@ -1,5 +1,5 @@
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
@@ -15,26 +15,62 @@ export default function AuthForm() {
   const navigate = useNavigate();
   const { toast } = useToast();
 
+  // Check for existing session on mount
+  useEffect(() => {
+    const checkSession = async () => {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (session) {
+        navigate("/dashboard");
+      }
+    };
+    
+    checkSession();
+  }, [navigate]);
+
   const handleAuth = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
 
     try {
-      const { error } = isSignUp 
-        ? await supabase.auth.signUp({ email, password })
-        : await supabase.auth.signInWithPassword({ email, password });
+      if (isSignUp) {
+        // Sign up flow
+        const { data, error } = await supabase.auth.signUp({ 
+          email, 
+          password,
+          options: {
+            emailRedirectTo: window.location.origin
+          }
+        });
 
-      if (error) throw error;
-      
-      toast({
-        title: isSignUp ? "Account created!" : "Welcome back!",
-        description: isSignUp ? "Please check your email to verify your account." : "You have been successfully logged in.",
-      });
+        if (error) throw error;
+        
+        toast({
+          title: "Account created!",
+          description: "Please check your email to verify your account.",
+        });
 
-      if (!isSignUp) navigate("/dashboard");
+        // After successful signup, switch to sign in mode
+        setIsSignUp(false);
+      } else {
+        // Sign in flow
+        const { data, error } = await supabase.auth.signInWithPassword({ 
+          email, 
+          password 
+        });
+
+        if (error) throw error;
+        
+        toast({
+          title: "Welcome back!",
+          description: "You have been successfully logged in.",
+        });
+
+        navigate("/dashboard");
+      }
     } catch (error) {
+      console.error("Authentication error:", error);
       toast({
-        title: "Error",
+        title: "Authentication Error",
         description: error.message,
         variant: "destructive",
       });
@@ -65,7 +101,7 @@ export default function AuthForm() {
             required
           />
           <Button type="submit" className="w-full" disabled={loading}>
-            {loading ? "Loading..." : isSignUp ? "Sign Up" : "Sign In"}
+            {loading ? "Processing..." : isSignUp ? "Sign Up" : "Sign In"}
           </Button>
           <Button
             type="button"
