@@ -18,7 +18,7 @@ export default function Navbar() {
         <div className="flex justify-between h-16 items-center">
           <div className="flex items-center space-x-2">
             <BookOpen className="h-6 w-6 text-purple-600" />
-            <span className="font-semibold text-lg">Predin</span>
+            <span className="font-semibold text-lg">Rasoi</span>
           </div>
           
           <div className="flex space-x-4 items-center">
@@ -36,4 +36,4 @@ export default function Navbar() {
       </div>
     </nav>
   );
-};
+}
