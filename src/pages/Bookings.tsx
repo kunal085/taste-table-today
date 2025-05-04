@@ -65,12 +65,12 @@ const Bookings = () => {
                   {booking.booking_items?.map((item, index) => (
                     <div key={index} className="flex justify-between">
                       <span>{item.quantity}x {item.menu_items.name}</span>
-                      <span>${(item.quantity * item.menu_items.price).toFixed(2)}</span>
+                      <span>₹{Math.round(item.quantity * item.menu_items.price * 83)}</span>
                     </div>
                   ))}
                 </div>
                 <p className="mt-4 font-semibold">
-                  Total Amount: ${booking.booking_amount}
+                  Total Amount: ₹{Math.round(booking.booking_amount * 83)}
                 </p>
               </CardContent>
             </Card>

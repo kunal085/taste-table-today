@@ -4,6 +4,45 @@ import { supabase } from "@/integrations/supabase/client";
 import Navbar from "@/components/layout/Navbar";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
+// Define a mapping for translating dish names to Indian dishes
+const translateToIndianDish = (category: string, name: string) => {
+  const indianDishes: Record<string, Record<string, string>> = {
+    "Appetizers": {
+      "Bruschetta": "Samosa",
+      "Calamari": "Pakora",
+      "Chicken Wings": "Chicken Tikka",
+      "Shrimp Cocktail": "Paneer Tikka",
+      "Spinach Artichoke Dip": "Chaat Papri",
+      // Add more mappings as needed
+    },
+    "Main Course": {
+      "Steak": "Butter Chicken",
+      "Salmon": "Palak Paneer",
+      "Chicken Parmesan": "Chicken Biryani",
+      "Lasagna": "Lamb Rogan Josh",
+      "Vegetable Stir Fry": "Vegetable Jalfrezi",
+      // Add more mappings as needed
+    },
+    "Desserts": {
+      "Cheesecake": "Gulab Jamun",
+      "Chocolate Cake": "Rasgulla",
+      "Apple Pie": "Kheer",
+      "Tiramisu": "Jalebi",
+      // Add more mappings as needed
+    },
+    "Drinks": {
+      "Wine": "Lassi",
+      "Beer": "Masala Chai",
+      "Cocktail": "Mango Lassi",
+      "Soft Drink": "Nimbu Pani",
+      // Add more mappings as needed
+    }
+  };
+
+  // If we have a mapping for this dish, return it, otherwise return the original name
+  return indianDishes[category]?.[name] || name;
+};
+
 const Menu = () => {
   const [menuItems, setMenuItems] = useState([]);
   const [categories, setCategories] = useState([]);
@@ -16,7 +55,13 @@ const Menu = () => {
         .order("category");
 
       if (!error && data) {
-        setMenuItems(data);
+        // Transform menu items to have Indian dish names
+        const transformedData = data.map(item => ({
+          ...item,
+          displayName: translateToIndianDish(item.category, item.name)
+        }));
+        
+        setMenuItems(transformedData);
         const uniqueCategories = [...new Set(data.map(item => item.category))];
         setCategories(uniqueCategories);
       }
@@ -39,7 +84,7 @@ const Menu = () => {
                 .map((item) => (
                   <Card key={item.id}>
                     <CardHeader>
-                      <CardTitle>{item.name}</CardTitle>
+                      <CardTitle>{item.displayName || item.name}</CardTitle>
                     </CardHeader>
                     <CardContent>
                       <p className="text-gray-600">{item.description}</p>

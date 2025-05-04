@@ -10,12 +10,52 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
+// Define a mapping for translating dish names to Indian dishes
+const translateToIndianDish = (category: string, name: string) => {
+  const indianDishes: Record<string, Record<string, string>> = {
+    "Appetizers": {
+      "Bruschetta": "Samosa",
+      "Calamari": "Pakora",
+      "Chicken Wings": "Chicken Tikka",
+      "Shrimp Cocktail": "Paneer Tikka",
+      "Spinach Artichoke Dip": "Chaat Papri",
+      // Add more mappings as needed
+    },
+    "Main Course": {
+      "Steak": "Butter Chicken",
+      "Salmon": "Palak Paneer",
+      "Chicken Parmesan": "Chicken Biryani",
+      "Lasagna": "Lamb Rogan Josh",
+      "Vegetable Stir Fry": "Vegetable Jalfrezi",
+      // Add more mappings as needed
+    },
+    "Desserts": {
+      "Cheesecake": "Gulab Jamun",
+      "Chocolate Cake": "Rasgulla",
+      "Apple Pie": "Kheer",
+      "Tiramisu": "Jalebi",
+      // Add more mappings as needed
+    },
+    "Drinks": {
+      "Wine": "Lassi",
+      "Beer": "Masala Chai",
+      "Cocktail": "Mango Lassi",
+      "Soft Drink": "Nimbu Pani",
+      // Add more mappings as needed
+    }
+  };
+
+  // If we have a mapping for this dish, return it, otherwise return the original name
+  return indianDishes[category]?.[name] || name;
+};
+
 type MenuItem = {
   id: string;
   name: string;
   description: string;
   price: number;
   category: string;
+  displayName?: string;
 };
 
 type TableDetails = {
@@ -80,7 +120,12 @@ const NewBooking = () => {
         .order("category", { ascending: true });
 
       if (!error && data) {
-        setMenuItems(data);
+        // Transform menu items to have Indian dish names
+        const transformedItems = data.map(item => ({
+          ...item,
+          displayName: translateToIndianDish(item.category, item.name)
+        }));
+        setMenuItems(transformedItems);
       }
     };
 
@@ -117,7 +162,7 @@ const NewBooking = () => {
         total += menuItem.price * selectedItem.quantity;
       }
     });
-    return total.toFixed(2);
+    return (total * 83).toFixed(0);
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -140,7 +185,7 @@ const NewBooking = () => {
         return;
       }
 
-      const bookingAmount = parseFloat(calculateTotal());
+      const bookingAmount = parseFloat(calculateTotal()) / 83; // Convert back to the original currency for storage
       
       // Create booking
       const { data: bookingData, error: bookingError } = await supabase
@@ -305,11 +350,11 @@ const NewBooking = () => {
                                 className="flex justify-between items-center border-b pb-2"
                               >
                                 <div>
-                                  <p className="font-medium">{item.name}</p>
+                                  <p className="font-medium">{item.displayName || item.name}</p>
                                   <p className="text-sm text-gray-600">
                                     {item.description}
                                   </p>
-                                  <p>${item.price.toFixed(2)}</p>
+                                  <p>₹{Math.round(item.price * 83)}</p>
                                 </div>
                                 <div className="flex items-center gap-2">
                                   <Button
@@ -341,7 +386,7 @@ const NewBooking = () => {
                 
                 <div className="mt-6 text-right">
                   <p className="text-xl font-bold">
-                    Total: ${calculateTotal()}
+                    Total: ₹{calculateTotal()}
                   </p>
                 </div>
               </CardContent>
