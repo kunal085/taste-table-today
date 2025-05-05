@@ -32,7 +32,7 @@ const translateToIndianDish = (category: string, name: string) => {
     },
     "Drinks": {
       "Wine": "Lassi",
-      "Beer": "Masala Chai ban",
+      "Beer": "Masala Chai",
       "Cocktail": "Mango Lassi",
       "Soft Drink": "Nimbu Pani",
       // Add more mappings as needed
@@ -84,7 +84,7 @@ const Menu = () => {
                 .map((item) => (
                   <Card key={item.id}>
                     <CardHeader>
-                      <CardTitle>{item.displayName || item.name}</CardTitle>
+                      <CardTitle>{item.displayName}</CardTitle>
                     </CardHeader>
                     <CardContent>
                       <p className="text-gray-600">{item.description}</p>

@@ -5,6 +5,37 @@ import { supabase } from "@/integrations/supabase/client";
 import Navbar from "@/components/layout/Navbar";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
+// Define a mapping for translating dish names to Indian dishes
+const translateToIndianDish = (name: string) => {
+  const indianDishes: Record<string, string> = {
+    // Appetizers
+    "Bruschetta": "Samosa",
+    "Calamari": "Pakora",
+    "Chicken Wings": "Chicken Tikka",
+    "Shrimp Cocktail": "Paneer Tikka",
+    "Spinach Artichoke Dip": "Chaat Papri",
+    // Main Course
+    "Steak": "Butter Chicken",
+    "Salmon": "Palak Paneer",
+    "Chicken Parmesan": "Chicken Biryani",
+    "Lasagna": "Lamb Rogan Josh",
+    "Vegetable Stir Fry": "Vegetable Jalfrezi",
+    // Desserts
+    "Cheesecake": "Gulab Jamun",
+    "Chocolate Cake": "Rasgulla",
+    "Apple Pie": "Kheer",
+    "Tiramisu": "Jalebi",
+    // Drinks
+    "Wine": "Lassi",
+    "Beer": "Masala Chai",
+    "Cocktail": "Mango Lassi",
+    "Soft Drink": "Nimbu Pani",
+  };
+
+  // If we have a mapping for this dish, return it, otherwise return the original name
+  return indianDishes[name] || name;
+};
+
 const Bookings = () => {
   const navigate = useNavigate();
   const [bookings, setBookings] = useState([]);
@@ -35,7 +66,21 @@ const Bookings = () => {
         `)
         .order("booking_date", { ascending: true });
 
-      if (!error && data) setBookings(data);
+      if (!error && data) {
+        // Transform the data to include Indian dish names
+        const transformedData = data.map(booking => ({
+          ...booking,
+          booking_items: booking.booking_items?.map(item => ({
+            ...item,
+            menu_items: {
+              ...item.menu_items,
+              displayName: translateToIndianDish(item.menu_items.name)
+            }
+          }))
+        }));
+        
+        setBookings(transformedData);
+      }
     };
 
     fetchBookings();
@@ -64,7 +109,7 @@ const Bookings = () => {
                   <h4 className="font-semibold">Order Items:</h4>
                   {booking.booking_items?.map((item, index) => (
                     <div key={index} className="flex justify-between">
-                      <span>{item.quantity}x {item.menu_items.name}</span>
+                      <span>{item.quantity}x {item.menu_items.displayName || item.menu_items.name}</span>
                       <span>₹{Math.round(item.quantity * item.menu_items.price * 83)}</span>
                     </div>
                   ))}
