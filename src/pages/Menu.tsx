@@ -32,7 +32,7 @@ const translateToIndianDish = (category: string, name: string) => {
     },
     "Drinks": {
       "Wine": "Lassi",
-      "Beer": "Masala Chai",
+      "Beer": "Masala Chai ban",
       "Cocktail": "Mango Lassi",
       "Soft Drink": "Nimbu Pani",
       // Add more mappings as needed
